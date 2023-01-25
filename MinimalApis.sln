@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApisBasic", "MinimalApisBasic\MinimalApisBasic.csproj", "{7FA04ED8-8FCD-423C-9F10-08B2FD25629D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApis", "MinimalApis\MinimalApis.csproj", "{DA650348-2832-44B4-8102-B7D1A186498E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7FA04ED8-8FCD-423C-9F10-08B2FD25629D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FA04ED8-8FCD-423C-9F10-08B2FD25629D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FA04ED8-8FCD-423C-9F10-08B2FD25629D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FA04ED8-8FCD-423C-9F10-08B2FD25629D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA650348-2832-44B4-8102-B7D1A186498E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA650348-2832-44B4-8102-B7D1A186498E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA650348-2832-44B4-8102-B7D1A186498E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA650348-2832-44B4-8102-B7D1A186498E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
