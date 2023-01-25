@@ -1,4 +1,5 @@
-﻿using MinimalApis.Endpoints;
+﻿using System.Reflection;
+using MinimalApis.Endpoints;
 
 namespace MinimalApis.Utils;
 
@@ -15,9 +16,52 @@ public static class InitializationExtensions
             .Cast<IEndpointDefinition>()
             .ToList();
 
-        endpointDefinitions.ForEach(e => e.DefineServices(services));
-
         services.AddSingleton(endpointDefinitions as IReadOnlyCollection<IEndpointDefinition>);
+
+        return services;
+    }
+
+    public static IServiceCollection RegisterServices<TMarker>(this IServiceCollection services, params Assembly[] assemblies)
+    {
+        var lassemblies = assemblies.ToHashSet();
+        lassemblies.Add(typeof(TMarker).Assembly);
+
+        var allTypes = lassemblies.SelectMany(
+                assembly => assembly
+                    .DefinedTypes
+                    .Where(t => Attribute.IsDefined(t.AsType(), typeof(InjectedAttribute)))
+                    .Select(t => (Type: t.AsType(), Atrribute: t.GetCustomAttribute<InjectedAttribute>()))
+            )
+            .ToList();
+
+        var genericTypes = lassemblies.SelectMany(
+                assembly => assembly
+                    .DefinedTypes
+                    .Where(t => Attribute.IsDefined(t.AsType(), typeof(InjectedAttribute<>)))
+                    .Select(t => (Type: t.AsType(), Atrribute: t.GetCustomAttribute<InjectedAttribute>()))
+            )
+            .ToList();
+
+        var concreteTypes = from type in allTypes
+            join interfaceType in genericTypes on type.Type equals interfaceType.Type into temp
+            from registeredInterfaceType in temp.DefaultIfEmpty()
+            where registeredInterfaceType == default
+            select new ServiceDescriptor(type.Type, type.Type, type.Atrribute.Lifetime);
+
+        var interfaceTypes = from type in allTypes
+            join interfaceType in genericTypes on type.Type equals interfaceType.Type into temp
+            from registeredInterfaceType in temp.DefaultIfEmpty()
+            where registeredInterfaceType != default
+            select new ServiceDescriptor(
+                registeredInterfaceType.Atrribute.GetRegisteredTypeFromAttribute(),
+                registeredInterfaceType.Type,
+                type.Atrribute.Lifetime
+            );
+
+        concreteTypes
+            .Concat(interfaceTypes)
+            .ToList()
+            .ForEach(services.Add);
 
         return services;
     }
@@ -31,5 +75,11 @@ public static class InitializationExtensions
             .ForEach(e => e.DefineEndpoints(app));
 
         return app;
+    }
+
+    private static Type GetRegisteredTypeFromAttribute(this InjectedAttribute attribute)
+    {
+        return (attribute.GetType().GetProperty(nameof(InjectedAttribute<object>.RegisteredType))!
+            .GetValue(attribute) as Type)!;
     }
 }
