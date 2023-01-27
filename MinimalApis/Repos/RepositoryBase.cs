@@ -1,7 +1,6 @@
 ﻿using MinimalApis.Interfaces;
-using MinimalApis.Repos;
 
-namespace MinimalApis.Endpoints;
+namespace MinimalApis.Repos;
 
 public abstract class RepositoryBase<TModel, TId> : IRepository<TModel, TId>
 where TModel : class, IIdentifiable<TId> where TId : notnull
@@ -13,8 +12,8 @@ where TModel : class, IIdentifiable<TId> where TId : notnull
 
     protected readonly Dictionary<TId, TModel> DataSet;
 
-    public IEnumerable<TModel> List()
-        => DataSet.Values;
+    public IEnumerable<TModel> List(int count = 10, int page = 1)
+        => DataSet.Values.Skip((page - 1) * count).Take(count);
 
     public TModel? Get(TId id)
     {
