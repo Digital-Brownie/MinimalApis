@@ -1,18 +1,21 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using MinimalApis.Interfaces;
+using MinimalApis.Queries;
 using MinimalApis.Repos;
 
 namespace MinimalApis.Endpoints;
 
-public abstract class CrudEndpointDefinition<TModel, TId>
+public abstract class CrudEndpointDefinition<TModel, TId, TQuery>
     where TModel : class, IIdentifiable<TId>
+    where TQuery : QueryBase
 {
     protected abstract string BaseRoute { get; }
 
     protected virtual void MapCrudEndpoints(WebApplication app)
     {
-        MapGetAll(app, "/");
+        MapDefaultQuery(app, "/");
+        MapQuery(app, "/query");
         MapGet(app, "/{id:guid}");
         MapPost(app, "/");
         MapPut(app, "/{id:guid}");
@@ -24,9 +27,17 @@ public abstract class CrudEndpointDefinition<TModel, TId>
         return app.MapGet($"{BaseRoute}{pattern}", Get);
     }
 
-    protected virtual RouteHandlerBuilder MapGetAll(WebApplication app, [StringSyntax(StringSyntaxAttribute.Uri)] string pattern)
+    protected virtual RouteHandlerBuilder MapDefaultQuery(WebApplication app, [StringSyntax(StringSyntaxAttribute.Uri)] string pattern)
     {
         return app.MapGet($"{BaseRoute}{pattern}", List);
+    }
+
+    protected virtual RouteHandlerBuilder MapQuery(WebApplication app, [StringSyntax(StringSyntaxAttribute.Uri)] string pattern)
+    {
+        return app.MapGet(
+            $"{BaseRoute}{pattern}",
+            (IRepository<TModel, TId> repository, TQuery query) => Query(repository, query)
+            );
     }
 
     protected virtual RouteHandlerBuilder MapPost(WebApplication app, [StringSyntax(StringSyntaxAttribute.Uri)] string pattern)
@@ -61,8 +72,15 @@ public abstract class CrudEndpointDefinition<TModel, TId>
             Status = 404
         });
 
-    protected virtual IEnumerable<TModel> List([FromServices] IRepository<TModel, TId> repository)
-        => repository.List();
+    protected virtual IEnumerable<TModel> Query(IRepository<TModel, TId> repository, TQuery query)
+    {
+        var (count, page) = query;
+
+        return repository.List(count, page);
+    }
+
+    protected virtual IEnumerable<TModel> List(IRepository<TModel, TId> repository)
+        => repository.List(10, 1);
 
     protected virtual IResult Get([FromServices] IRepository<TModel, TId> repository, TId id)
         => IsNotFound(repository.Get(id));
