@@ -72,14 +72,14 @@ public abstract class CrudEndpointDefinition<TModel, TId, TQuery>
             Status = 404
         });
 
-    protected virtual IEnumerable<TModel> Query(IRepository<TModel, TId> repository, TQuery query)
+    protected virtual IEnumerable<TModel> Query([FromServices] IRepository<TModel, TId> repository, TQuery query)
     {
         var (count, page) = query;
 
         return repository.List(count, page);
     }
 
-    protected virtual IEnumerable<TModel> List(IRepository<TModel, TId> repository)
+    protected virtual IEnumerable<TModel> List([FromServices] IRepository<TModel, TId> repository)
         => repository.List(10, 1);
 
     protected virtual IResult Get([FromServices] IRepository<TModel, TId> repository, TId id)
