@@ -1,5 +1,4 @@
-﻿using System.Web;
-using Humanizer;
+﻿using Humanizer;
 
 namespace MinimalApis.Queries;
 

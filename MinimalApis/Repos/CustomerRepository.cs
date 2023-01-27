@@ -1,5 +1,4 @@
-﻿using MinimalApis.Endpoints;
-using MinimalApis.Models;
+﻿using MinimalApis.Models;
 
 namespace MinimalApis.Repos;
 
