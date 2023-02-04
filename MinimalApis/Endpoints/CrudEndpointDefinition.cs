@@ -14,12 +14,12 @@ public abstract class CrudEndpointDefinition<TModel, TId, TQuery>
 
     protected virtual void MapCrudEndpoints(WebApplication app)
     {
-        MapDefaultQuery(app, "/");
-        MapQuery(app, "/query");
-        MapGet(app, "/{id:guid}");
-        MapPost(app, "/");
-        MapPut(app, "/{id:guid}");
-        MapDelete(app, "/{id:guid}");
+        MapDefaultQuery(app, "/").Produces<IEnumerable<TModel>>();
+        MapQuery(app, "/query").Produces<IEnumerable<TModel>>();
+        MapGet(app, "/{id:guid}").Produces<TModel>();
+        MapPost(app, "/").Produces<TModel>();
+        MapPut(app, "/{id:guid}").Produces<TModel>();
+        MapDelete(app, "/{id:guid}").Produces(204);
     }
 
     protected virtual RouteHandlerBuilder MapGet(WebApplication app, [StringSyntax(StringSyntaxAttribute.Uri)] string pattern)
