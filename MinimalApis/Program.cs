@@ -5,10 +5,12 @@ using MinimalApis.Utils;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddEndpointDefinitions(typeof(IEndpointDefinition));
+    .AddEndpointDefinitions(typeof(IEndpointDefinition))
+    .RegisterServices<Program>();
 
 var app = builder.Build();
 
-app
+builder
+    .Build()
     .UseEndpointDefinitions()
     .Run();
