@@ -10,7 +10,6 @@ builder.Services
 
 var app = builder.Build();
 
-builder
-    .Build()
+app
     .UseEndpointDefinitions()
     .Run();
