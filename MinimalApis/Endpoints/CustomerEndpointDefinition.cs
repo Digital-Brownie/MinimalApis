@@ -2,7 +2,6 @@
 using MinimalApis.Models;
 using MinimalApis.Queries;
 using MinimalApis.Repos;
-using MinimalApis.Queries;
 
 namespace MinimalApis.Endpoints;
 

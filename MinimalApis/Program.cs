@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using MinimalApis.Endpoints;
 using MinimalApis.Utils;
 
