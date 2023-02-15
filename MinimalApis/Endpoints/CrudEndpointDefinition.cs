@@ -1,5 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
+using MinimalApis.Attributes;
 using MinimalApis.Interfaces;
 using MinimalApis.Queries;
 using MinimalApis.Repos;
@@ -11,6 +14,8 @@ public abstract class CrudEndpointDefinition<TModel, TId, TQuery>
     where TQuery : QueryBase
 {
     protected abstract string BaseRoute { get; }
+
+    protected abstract List<Expression<Func<TModel, bool>>> QueryParams { get; }
 
     protected virtual void MapCrudEndpoints(WebApplication app)
     {
@@ -75,6 +80,26 @@ public abstract class CrudEndpointDefinition<TModel, TId, TQuery>
     protected virtual IEnumerable<TModel> Query([FromServices] IRepository<TModel, TId> repository, TQuery query)
     {
         var (count, page) = query;
+
+        var predicates = query
+            .GetType()
+            .GetProperties()
+            .Where(p => p.GetValue(query) is not null)
+            .Where(p => p.GetCustomAttribute<PredicateAttribute>() is not null)
+            .Select(p => (p.Name, Type: p.PropertyType, Value: p.GetValue(query)));
+
+        var (name, type, value) = predicates.First();
+
+        ParameterExpression numParam = Expression.Parameter(type, name);
+        ConstantExpression five = Expression.Constant(value, type);
+        BinaryExpression numLessThanFive = Expression.GreaterThan(numParam, five);
+        // Expression<Func<int, bool>> lambda1 =
+        //     Expression.Lambda<Func<int, bool>>(
+        //         numLessThanFive, numParam);
+
+        Expression.Block(
+
+            )
 
         return repository.List(count, page);
     }

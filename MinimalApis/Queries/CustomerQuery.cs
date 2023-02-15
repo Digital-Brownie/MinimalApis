@@ -1,16 +1,23 @@
 ﻿using System.Reflection;
 using JetBrains.Annotations;
+using MinimalApis.Attributes;
 
 namespace MinimalApis.Queries;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public record CustomerQuery(int Count, int Page) : QueryBase(Count, Page)
 {
+    [Predicate]
     public string? Username { get; init; }
+    [Predicate]
     public string? UsernameLike { get; init; }
+    [Predicate]
     public string? Email { get; init; }
+    [Predicate]
     public int? Age { get; init; }
+    [Predicate]
     public int? AgeGreaterThan { get; init; }
+    [Predicate]
     public int? AgeLessThan { get; init; }
 
     public static ValueTask<CustomerQuery> BindAsync(HttpContext context, ParameterInfo parameter)

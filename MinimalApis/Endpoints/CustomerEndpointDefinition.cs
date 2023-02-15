@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Linq.Expressions;
+using JetBrains.Annotations;
 using MinimalApis.Models;
 using MinimalApis.Queries;
 using MinimalApis.Repos;
@@ -11,6 +12,7 @@ public class CustomerEndpointDefinition : CrudEndpointDefinition<Customer, Guid,
 {
     private const string BaseRouteField = "customers";
     protected override string BaseRoute => BaseRouteField;
+    protected override List<Expression<Func<Customer, bool>>> QueryParams { get; } = new();
 
     public void DefineEndpoints(WebApplication app)
     {
